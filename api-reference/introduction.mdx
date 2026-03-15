@@ -1,33 +1,71 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: Introduction
+description: The Motionforge API lets you create and manage video generation jobs programmatically.
 ---
 
+## Overview
+
+The Motionforge REST API allows you to integrate AI video generation directly into your workflows, tools, and applications.
+
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  API access is reserved for **Studio plan** users.
 </Note>
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+## Base URL
+```
+https://api.motionforge.io/v1
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+All API requests must include a valid Bearer token in the `Authorization` header.
+```bash
+Authorization: Bearer YOUR_API_KEY
 ```
+
+You can generate your API key in [Settings → API Keys](https://app.motionforge.io/settings/api).
+
+## Request format
+
+All requests and responses use JSON.
+```bash
+Content-Type: application/json
+```
+
+## Response format
+
+All responses follow this structure:
+```json
+{
+  "job_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "status": "queued",
+  "mode": "mode3",
+  "created_at": "2026-03-15T10:00:00Z"
+}
+```
+
+## Job statuses
+
+| Status | Description |
+|---|---|
+| `queued` | Job is waiting to be processed |
+| `processing` | Job is currently being generated |
+| `done` | Video is ready to download |
+| `failed` | Job failed — no credits charged |
+
+## Rate limiting
+
+| Plan | Requests / minute |
+|---|---|
+| Studio | 60 |
+
+## Errors
+
+| Code | Description |
+|---|---|
+| `400` | Bad request — invalid parameters |
+| `401` | Unauthorized — missing or invalid token |
+| `403` | Forbidden — you don't have access to this resource |
+| `404` | Not found |
+| `409` | Conflict — e.g. retrying a non-failed job |
+| `429` | Rate limit exceeded |

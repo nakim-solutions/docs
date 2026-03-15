@@ -1,0 +1,38 @@
+---
+title: Retry a job
+description: Retry a failed job.
+---
+
+## Endpoint
+```
+POST /v1/jobs/{job_id}/retry
+```
+
+<Note>
+  Only jobs with status `failed` can be retried.
+</Note>
+
+## Path parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `job_id` | UUID | The failed job ID |
+
+## Response
+
+Returns a new job object with status `queued`.
+```json
+{
+  "job_id": "9bc12a34-1234-5678-abcd-ef1234567890",
+  "mode": "mode3",
+  "status": "queued",
+  "retried_from": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "created_at": "2026-03-15T10:05:00Z"
+}
+```
+
+## Example
+```bash
+curl -X POST https://api.motionforge.io/v1/jobs/3fa85f64-5717-4562-b3fc-2c963f66afa6/retry \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
