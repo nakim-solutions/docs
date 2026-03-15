@@ -2,7 +2,9 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Motionforge",
-  "openapi": "api-reference/openapi.json",
+  "api": {
+  "openapi": "api-reference/openapi.json"
+  },
   "colors": {
     "primary": "#4f6fff",
     "light": "#7b96ff",
@@ -50,16 +52,19 @@
           {
             "group": "Jobs",
             "pages": [
-              "api-reference/jobs/create",
-              "api-reference/jobs/list",
-              "api-reference/jobs/get",
-              "api-reference/jobs/retry",
-              "api-reference/jobs/download"
+              "api-reference/openapi/list-jobs",
+              "api-reference/openapi/create-job",
+              "api-reference/openapi/get-job",
+              "api-reference/openapi/retry-job",
+              "api-reference/openapi/download-job",
+              "api-reference/openapi/prepare-job"
             ]
           },
           {
             "group": "Credits",
-            "pages": ["api-reference/credits/get"]
+            "pages": [
+              "api-reference/openapi/get-credits"
+            ]
           }
         ]
       }
