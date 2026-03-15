@@ -1,0 +1,364 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Motionforge API",
+    "description": "AI-powered short-form video generation API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.motionforge.io/v1",
+      "description": "Production"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/jobs": {
+      "get": {
+        "summary": "List jobs",
+        "description": "Returns all jobs for the authenticated user.",
+        "operationId": "listJobs",
+        "tags": ["Jobs"],
+        "responses": {
+          "200": {
+            "description": "List of jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "summary": "Create a job",
+        "description": "Create a new video generation job.",
+        "operationId": "createJob",
+        "tags": ["Jobs"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Job" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/jobs/prepare": {
+      "post": {
+        "summary": "Prepare from video",
+        "description": "Analyze a video URL and extract script and scene structure. Public endpoint — no authentication required.",
+        "operationId": "prepareJob",
+        "tags": ["Jobs"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["video_url"],
+                "properties": {
+                  "video_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://youtube.com/watch?v=dQw4w9WgXcQ"
+                  },
+                  "max_scenes": {
+                    "type": "integer",
+                    "default": 4,
+                    "minimum": 1,
+                    "maximum": 12
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extracted script and scenes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "video_url": { "type": "string" },
+                    "script_text": { "type": "string" },
+                    "scenes": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Scene" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}": {
+      "get": {
+        "summary": "Get a job",
+        "description": "Retrieve a single job by ID.",
+        "operationId": "getJob",
+        "tags": ["Jobs"],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Job" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/jobs/{job_id}/retry": {
+      "post": {
+        "summary": "Retry a job",
+        "description": "Retry a failed job. Only jobs with status `failed` can be retried.",
+        "operationId": "retryJob",
+        "tags": ["Jobs"],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "New job created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Job" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/jobs/{job_id}/download": {
+      "get": {
+        "summary": "Download a job",
+        "description": "Get the download URL for a completed video.",
+        "operationId": "downloadJob",
+        "tags": ["Jobs"],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Download URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "output_url": { "type": "string", "format": "uri" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/jobs/credits/{user_id}": {
+      "get": {
+        "summary": "Get credits",
+        "description": "Get remaining credits for the authenticated user.",
+        "operationId": "getCredits",
+        "tags": ["Credits"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credits remaining",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": { "type": "string" },
+                    "credits_remaining": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Job": {
+        "type": "object",
+        "properties": {
+          "job_id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string" },
+          "mode": { "type": "string", "enum": ["mode1", "mode2", "mode3"] },
+          "status": { "type": "string", "enum": ["queued", "processing", "done", "failed"] },
+          "current_step": { "type": "string", "nullable": true },
+          "output_url": { "type": "string", "nullable": true },
+          "error_message": { "type": "string", "nullable": true },
+          "voice_id": { "type": "string", "nullable": true },
+          "credits_used": { "type": "integer" },
+          "retried_from": { "type": "string", "format": "uuid", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Scene": {
+        "type": "object",
+        "required": ["prompt"],
+        "properties": {
+          "prompt": { "type": "string", "minLength": 3, "maxLength": 500 },
+          "script_segment": { "type": "string", "nullable": true },
+          "image_url": { "type": "string", "format": "uri", "nullable": true }
+        }
+      },
+      "JobCreateRequest": {
+        "type": "object",
+        "required": ["mode", "voiceover_enabled", "music_enabled", "subtitles_enabled"],
+        "properties": {
+          "mode": { "type": "string", "enum": ["mode1", "mode2", "mode3"] },
+          "video_url": { "type": "string", "format": "uri", "nullable": true },
+          "script_text": { "type": "string", "nullable": true },
+          "scenes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Scene" }
+          },
+          "voiceover_enabled": { "type": "boolean" },
+          "voice_id": { "type": "string", "nullable": true },
+          "music_enabled": { "type": "boolean" },
+          "subtitles_enabled": { "type": "boolean" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "detail": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "detail": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "detail": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "detail": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "detail": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

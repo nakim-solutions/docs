@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Motionforge",
+  "openapi": "api-reference/openapi.json",
   "colors": {
     "primary": "#4f6fff",
     "light": "#7b96ff",
@@ -44,9 +45,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "Jobs",
@@ -60,9 +59,7 @@
           },
           {
             "group": "Credits",
-            "pages": [
-              "api-reference/credits/get"
-            ]
+            "pages": ["api-reference/credits/get"]
           }
         ]
       }
