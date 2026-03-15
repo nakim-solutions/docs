@@ -1,0 +1,44 @@
+---
+title: Mode 1 — From Video
+description: Drop a reference video and let Motionforge do everything.
+---
+
+## What is Mode 1?
+
+Mode 1 is the fastest way to generate a video. You provide a YouTube URL — Motionforge analyzes the structure, extracts the script, and generates a completely new original video in the same format.
+
+<Note>
+  Mode 1 never copies the source video. It extracts the **format and structure**, then rewrites the content from scratch.
+</Note>
+
+## How to use it
+
+<Steps>
+  <Step title="Select From video link">
+    On the New Job page, click **"From video link"**.
+  </Step>
+  <Step title="Paste your video URL">
+    Enter a YouTube URL in the **Video URL** field.
+  </Step>
+  <Step title="Click Analyze video">
+    Motionforge extracts the script and scene structure from the video.
+  </Step>
+  <Step title="Create the job">
+    Review the extracted content and click **Create job**.
+  </Step>
+</Steps>
+
+## What happens behind the scenes
+
+1. The audio is transcribed with Whisper
+2. An LLM analyzes the structure — hooks, rhythm, transitions, CTA
+3. A new original script is generated in the same format
+4. Visual prompts are generated for each scene
+5. Clips, voiceover and music are generated
+6. Everything is assembled into a final 9:16 video
+
+## Best for
+
+- Quickly reproducing a viral video format
+- Testing content styles before customizing
+- High-volume content production

@@ -1,0 +1,35 @@
+---
+title: Get a job
+description: Retrieve a single job by ID.
+---
+
+## Endpoint
+```
+GET /v1/jobs/{job_id}
+```
+
+## Path parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `job_id` | UUID | The job ID |
+
+## Response
+```json
+{
+  "job_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "mode": "mode3",
+  "status": "processing",
+  "current_step": "phase_d_gpu_generation",
+  "created_at": "2026-03-15T10:00:00Z",
+  "updated_at": "2026-03-15T10:01:00Z",
+  "output_url": null,
+  "credits_used": 0
+}
+```
+
+## Example
+```bash
+curl https://api.motionforge.io/v1/jobs/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
