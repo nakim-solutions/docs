@@ -1,0 +1,32 @@
+---
+title: Download a job
+description: Get the download URL for a completed video.
+---
+
+## Endpoint
+```
+GET /v1/jobs/{job_id}/download
+```
+
+<Note>
+  Only available for jobs with status `done`.
+</Note>
+
+## Path parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `job_id` | UUID | The completed job ID |
+
+## Response
+```json
+{
+  "output_url": "https://r2.motionforge.io/3fa85f64-5717-4562-b3fc-2c963f66afa6.mp4"
+}
+```
+
+## Example
+```bash
+curl https://api.motionforge.io/v1/jobs/3fa85f64-5717-4562-b3fc-2c963f66afa6/download \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
